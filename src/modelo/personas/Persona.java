@@ -28,10 +28,15 @@ public abstract class Persona {
     }
 
     public void setTelefono(String telefono) {
-        if (telefono == null || !telefono.matches("\\d{10}")) {
-            throw new IllegalArgumentException("El telefono debe tener 10 digitos >:c");
+        if (telefono == null) {
+            throw new IllegalArgumentException("El telefono no puede ser nulo >:c");
         }
-        this.telefono = telefono.strip();
+        telefono = telefono.strip();
+
+        if (telefono.isBlank() || !telefono.matches("\\d{10}")) {
+            throw new IllegalArgumentException("El telefono debe contener solamente dígitos >:c");
+        }
+        this.telefono = telefono;
     }
 
     public void setCorreo(String correo) {
@@ -60,5 +65,13 @@ public abstract class Persona {
 
     public String getCorreo() {
         return correo;
+    }
+
+    @Override
+    public String toString() {
+        return "Nombre: " + nombre +
+            "\nApellido: " + apellido +
+            "\nTeléfono: " + telefono +
+            "\nCorreo: " + correo;
     }
 }
