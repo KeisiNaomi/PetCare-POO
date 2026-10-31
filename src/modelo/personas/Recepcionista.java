@@ -10,7 +10,7 @@ public class Recepcionista extends Persona {
 
     public void setTurno(Turno turno) {
         if (turno == null) {
-            throw new IllegalArgumentException("El turno no puede ser nulo >:c");
+            throw new IllegalArgumentException("Especifíque el turno del recepcionista >:c");
         }
         this.turno = turno;
     }

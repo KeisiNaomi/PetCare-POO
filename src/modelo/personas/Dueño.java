@@ -10,7 +10,7 @@ public class Dueño extends Persona {
     
     public void setDireccion(String direccion) {
         if (direccion == null || direccion.isBlank()) {
-            throw new IllegalArgumentException("La direccion no puede ser nula o vacia >:c");
+            throw new IllegalArgumentException("La dirección no puede estar vacía >:c");
         }
         this.direccion = direccion.strip();
     }
