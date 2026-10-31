@@ -12,7 +12,7 @@ public class Veterinario extends Persona {
 
     public void setCedulaProfesional(String cedulaProfesional) {
         if (cedulaProfesional == null) {
-            throw new IllegalArgumentException("La cédula no puede ser nula >:c");
+            throw new IllegalArgumentException("La cédula no puede estar vacía >:c");
         }
         cedulaProfesional = cedulaProfesional.strip();
 
