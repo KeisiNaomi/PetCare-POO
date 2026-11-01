@@ -8,10 +8,10 @@ public class Vacunacion extends Servicio {
         super("Vacunación", "Aplicación de vacunas para la prevención de enfermedades");
         
         if (tarifaVacunacion < 0) {
-            throw new IllegalArgumentException("La tarifa de vacunación no puede ser negativa");
+            throw new IllegalArgumentException("La tarifa de vacunación no puede ser menor a 0 >:c");
         }
         if (costoVacuna < 0) {
-            throw new IllegalArgumentException("El costo de la vacuna no puede ser negativo");
+            throw new IllegalArgumentException("El costo de la vacuna no puede ser menor a 0 >:c");
         }
         this.tarifaVacunacion = tarifaVacunacion;
         this.costoVacuna = costoVacuna;

@@ -1,10 +1,11 @@
 package modelo.servicios;
 
-public class Cirugia extends Servivio {
+public class Cirugia extends Servicio {
     private Complejidad complejidad;
     private double horasQuirofano;
 
     public Cirugia(Complejidad complejidad, double horasQuirofano) {
+        super("Cirugía", "Procedimiento quirúrgico que requiere intervención veterinaria especializada");
         if (complejidad == null) {
             throw new IllegalArgumentException("Especifíque la complejidad de la cirugía >:c");
         }
