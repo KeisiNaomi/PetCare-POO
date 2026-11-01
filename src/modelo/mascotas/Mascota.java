@@ -54,7 +54,7 @@ public abstract class Mascota {
     }
 
     public Dueño getDueño() {
-        return Dueño;
+        return dueño;
     }
 
     /*public HistorialClinico getHistorialClinico() {
