@@ -7,14 +7,17 @@ public abstract class Mascota {
     private int edad;
     private double peso;
     private Dueño dueño;
-    // private HistorialClinico historialClinico;
+    //private HistorialClinico historialClinico;
 
     public Mascota(String nombre, int edad, double peso, Dueño dueño) {
         setNombre(nombre);
+        setEdad(edad);
+        setPeso(peso);
+        setDueño(dueño);
     }
 
     public void setNombre(String nombre) {
-        if (nombre == null || !nombre.isBlank()) {
+        if (nombre == null || nombre.isBlank()) {
             throw new IllegalArgumentException("El nombre no puede estar vacío >:c");
         }
         this.nombre = nombre.strip();
