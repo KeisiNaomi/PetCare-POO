@@ -4,9 +4,9 @@ import modelo.personas.Dueño;
 public class AveExotica extends Mascota {
     private double longitudAlas;
 
-    public AveExotica(String nombre, int edad, double peso, Dueño dueño) {
+    public AveExotica(String nombre, int edad, double peso, Dueño dueño, double longitudAlas) {
         super(nombre, edad, peso, dueño);
-        //setLongitudAlas(longitudAlas);
+        setLongitudAlas(longitudAlas);
     }
 
     public void setLongitudAlas(double longitudAlas) {
