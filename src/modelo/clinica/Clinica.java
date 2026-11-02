@@ -38,7 +38,7 @@ public class Clinica {
         veterinarios.add(veterinario);
     }
 
-    public void agregarMascota(Mascota mascota) {
+    public void registrarMascota(Mascota mascota) {
         if (mascota == null) {
             throw new IllegalArgumentException("Asigne una nueva mascota >:c");
         }
@@ -102,15 +102,34 @@ public class Clinica {
         cita.cancelarCita();
     }
 
-    public void atenderCita(int idCita) {
+    public void atenderCita(int idCita, String diagnostico, String tratamiento) {
         Cita cita = buscarCita(idCita);
         if (cita == null) {
             throw new IllegalArgumentException("No se encontró una cita con ese ID :c");
         }
+        if (cita.getEstado() != EstadoCita.PROGRAMADA) {
+            throw new IllegalArgumentException("Solo se pueden atender citas programadas >:c");
+        }
+        Consulta consulta = new Consulta(LocalDateTime.now(), diagnostico, tratamiento);
         cita.atenderCita();
+        cita.getMascota().getHistorialClinico().agregarConsulta(consulta);
     }
 
-    public void registrarConsulta(int idCita, String diagnostico, String tratamiento) {
-        
+    private double calculartotalCobrado(Mascota mascota, Veterinario veterinario) {
+        double total = 0;
+        for (Cita cita : citas) {
+            if (cita.getEstado() == EstadoCita.ATENDIDA && (mascota == null || cita.getMascota() == mascota) && (veterinario == null || cita.getVeterinario() == veterinario)) {
+                total += cita.calcularTotal();
+            }
+        }
+        return total;
+    }
+
+    public double calcularCobradoMascota(Mascota mascota) {
+        return calculartotalCobrado(mascota, null);
+    }
+
+    public double calcularCobradoVeterinario(Veterinario veterinario) {
+        return calculartotalCobrado(null, veterinario);
     }
 }
