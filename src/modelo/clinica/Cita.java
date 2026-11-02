@@ -72,6 +72,10 @@ public class Cita {
         return consultorio;
     }
 
+    public Comprobante getComprobante() {
+        return comprobante;
+    }
+
     public void atenderCita() {
         if (estado != EstadoCita.PROGRAMADA) {
             throw new IllegalArgumentException("Solo se pueden atender citas programadas >:c");

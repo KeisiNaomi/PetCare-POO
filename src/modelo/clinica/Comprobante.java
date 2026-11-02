@@ -19,6 +19,10 @@ public class Comprobante {
         return fechaEmision.format(fechaFormateada);
     }
 
+    public double getCostoTotal() {
+        return costoTotal;
+    }
+
     @Override
     public String toString() {
         return "Folio #" + folio +
