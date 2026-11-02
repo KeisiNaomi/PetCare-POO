@@ -1,6 +1,8 @@
 package modelo.personas;
 
 public class Veterinario extends Persona {
+    private static int contadorVeterinarios = 0;
+    private final int idVeterinario;
     private String cedulaProfesional;
     private String especialidad;
     
@@ -8,6 +10,7 @@ public class Veterinario extends Persona {
         super(nombre, apellido, telefono, correo);
         setCedulaProfesional(cedulaProfesonal);
         setEspecialidad(especialidad);
+        this.idVeterinario = ++contadorVeterinarios;
     }
 
     public void setCedulaProfesional(String cedulaProfesional) {
@@ -35,6 +38,10 @@ public class Veterinario extends Persona {
 
     public String getEspecialidad() {
         return especialidad;
+    }
+
+    public int getIdVeterinario() {
+        return idVeterinario;
     }
 
     @Override
