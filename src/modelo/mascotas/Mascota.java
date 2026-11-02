@@ -1,19 +1,20 @@
 package modelo.mascotas;
-
 import modelo.personas.Dueño;
+import modelo.clinica.HistorialClinico;
 
 public abstract class Mascota {
     private String nombre;
     private int edad;
     private double peso;
     private Dueño dueño;
-    //private HistorialClinico historialClinico;
+    private HistorialClinico historialClinico;
 
     public Mascota(String nombre, int edad, double peso, Dueño dueño) {
         setNombre(nombre);
         setEdad(edad);
         setPeso(peso);
         setDueño(dueño);
+        this.historialClinico = new HistorialClinico();
     }
 
     public void setNombre(String nombre) {
@@ -60,9 +61,9 @@ public abstract class Mascota {
         return dueño;
     }
 
-    /*public HistorialClinico getHistorialClinico() {
+    public HistorialClinico getHistorialClinico() {
         return historialClinico;
-    }*/
+    }
 
     public abstract void hacerSonido();
 }
