@@ -1,5 +1,6 @@
 package modelo.clinica;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ArrayList;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -19,6 +20,10 @@ public class Clinica {
             throw new IllegalArgumentException("Especifíque el nombre de la clínica");
         }
         this.nombre = nombre.strip();
+        this.consultorios = new ArrayList<>();
+        this.veterinarios = new ArrayList<>();
+        this.citas = new ArrayList<>();
+        this.mascotas = new ArrayList<>();
     }
 
     public void crearConsultorio(int numero) {
@@ -119,7 +124,9 @@ public class Clinica {
         double total = 0;
         for (Cita cita : citas) {
             if (cita.getEstado() == EstadoCita.ATENDIDA && (mascota == null || cita.getMascota() == mascota) && (veterinario == null || cita.getVeterinario() == veterinario)) {
-                total += cita.calcularTotal();
+                if (cita.getComprobante() != null) {
+                    total += cita.getComprobante().getCostoTotal();
+                }
             }
         }
         return total;
@@ -131,5 +138,9 @@ public class Clinica {
 
     public double calcularCobradoVeterinario(Veterinario veterinario) {
         return calculartotalCobrado(null, veterinario);
+    }
+
+    public List<Mascota> getMascotas() {
+        return new ArrayList<>(mascotas);
     }
 }
