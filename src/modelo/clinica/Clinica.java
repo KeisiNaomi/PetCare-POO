@@ -14,6 +14,7 @@ public class Clinica {
     private ArrayList<Veterinario> veterinarios;
     private ArrayList<Cita> citas;
     private ArrayList<Mascota> mascotas;
+    private ArrayList<Dueño> dueños;
 
     public Clinica (String nombre) {
         if (nombre == null || nombre.isBlank()) {
@@ -24,6 +25,7 @@ public class Clinica {
         this.veterinarios = new ArrayList<>();
         this.citas = new ArrayList<>();
         this.mascotas = new ArrayList<>();
+        this.dueños = new ArrayList<>();
     }
 
     public void crearConsultorio(int numero) {
@@ -69,6 +71,25 @@ public class Clinica {
             }
         }
         return false;
+    }
+
+    public void registrarDueño(Dueño dueño) {
+        if (dueño == null) {
+            throw new IllegalArgumentException("Asigne un nueco dueño >:c");
+        }
+        dueños.add(dueño);
+    }
+
+    public Dueño buscarDueño(int idDueño) {
+        if (idDueño <= 0) {
+            throw new IllegalArgumentException("Indique en ID de sueño válido >:c");
+        }
+        for (Dueño dueño : dueños) {
+            if (dueño.getIdDueño() == idDueño) {
+                return dueño;
+            }
+        }
+        return null;
     }
 
     public Cita registrarCita(LocalDateTime fechaHora, Mascota mascota, Veterinario veterinario, Consultorio consultorio) {
