@@ -1,18 +1,28 @@
 package app;
 import java.util.Scanner;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import modelo.clinica.Clinica;
+import modelo.clinica.Cita;
+import modelo.clinica.Consultorio;
 import modelo.mascotas.Mascota;
 import modelo.mascotas.Perro;
 import modelo.mascotas.Gato;
 import modelo.mascotas.EsDomestico;
 import modelo.mascotas.AveExotica;
 import modelo.personas.Dueño;
+import modelo.personas.Veterinario;
 
 public class PetCareApp {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         int opcion;
         Clinica clinica = new Clinica("PetCare");
+        clinica.crearConsultorio(1);
+        clinica.crearConsultorio(2);
+        clinica.crearConsultorio(3);
 
         do {
             mostrarMenu();
@@ -20,6 +30,7 @@ public class PetCareApp {
 
             switch (opcion) {
                 case 1 -> registrarDueñoYMascota(scanner, clinica);
+                case 2 -> registrarVeterinario(scanner, clinica);
                 case 10 -> {
                     System.out.println("Saliendo.... :c");
                     System.out.println("Hasta luego :3");
@@ -225,6 +236,24 @@ public class PetCareApp {
         } catch (IllegalArgumentException e) {
             System.out.println("Error: " + e.getMessage());
             return null;
+        }
+    }
+
+    public static void registrarVeterinario(Scanner scanner, Clinica clinica) {
+        System.out.println("\n------------ Registrar veterinario ------------");
+        String nombre = leerTexto(scanner, "Nombre: ");
+        String apellido = leerTexto(scanner, "Apellido: ");
+        String telefono = leerTexto(scanner, "Teléfono: ");
+        String correo = leerTexto(scanner, "Correo: ");
+        String cedula = leerTexto(scanner, "Cédula profesional: ");
+        String especialidad = leerTexto(scanner, "Especialidad: ");
+        try {
+            Veterinario veterinario = new Veterinario(nombre, apellido, telefono, correo, cedula, especialidad);
+            clinica.registrarVeterinario(veterinario);
+            System.out.println("¡Veterinario registrado correctamente! :D");
+            System.out.println("ID asignado: " + veterinario.getIdVeterinario());
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 }
