@@ -26,6 +26,7 @@ public class PetCareApp {
                 case 3 -> agendarCita(scanner, clinica);
                 case 4 -> gestionarCita(scanner, clinica);
                 case 5 -> generarComprobante(scanner, clinica);
+                case 6 -> consultarHistorialClinico(scanner, clinica);
                 case 10 -> {
                     System.out.println("Saliendo.... :c");
                     System.out.println("Hasta luego :3");
@@ -447,5 +448,17 @@ public class PetCareApp {
         } catch (IllegalArgumentException | IllegalStateException e) {
             System.out.println("Error: " + e.getMessage());
         }
+    }
+
+    public static void consultarHistorialClinico(Scanner scanner, Clinica clinica) {
+        System.out.println("\n---------- Historial clínico ----------");
+        Mascota mascota = obtenerMascota(scanner, clinica);
+        if (mascota == null) {
+            System.out.println("Regresando al menú principal...");
+            return;
+        }
+        System.out.println("\nMascota: " + mascota.getNombre());
+        System.out.println("---------- Consultas registradas ----------");
+        System.out.println(mascota.getHistorialClinico());
     }
 }
