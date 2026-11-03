@@ -4,7 +4,7 @@ import modelo.personas.Dueño;
 public class Gato extends Mascota {
     private EsDomestico esDomestico;
 
-    public Gato(String nombre, int edad, double peso, Dueño dueño) {
+    public Gato(String nombre, int edad, double peso, Dueño dueño, EsDomestico esDomestico) {
         super(nombre, edad, peso, dueño);
         setEsDomestico(esDomestico);
     }
@@ -13,6 +13,7 @@ public class Gato extends Mascota {
         if (esDomestico == null) {
             throw new IllegalArgumentException("Especifique si el gato es doméstico o no >:c");
         }
+        this.esDomestico = esDomestico;
     }
 
     @Override

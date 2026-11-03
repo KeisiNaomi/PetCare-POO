@@ -65,5 +65,15 @@ public abstract class Mascota {
         return historialClinico;
     }
 
+    @Override
+    public String toString() {
+        return "Nombre: " + nombre +
+        "\nEspecie: " + getClass().getSimpleName() +
+        "\nEdad: " + edad + " años" +
+        "\nPeso: " + peso + " kg" +
+        "\nDueño: " + dueño.getNombre() + " " +
+        dueño.getApellido();
+    }
+
     public abstract void hacerSonido();
 }
