@@ -29,6 +29,7 @@ public class PetCareApp {
                 case 6 -> consultarHistorialClinico(scanner, clinica);
                 case 7 -> listarMascotas(clinica);
                 case 8 -> consultarTotalVeterinario(scanner, clinica);
+                case 9 -> darBajaMascota(scanner, clinica);
                 case 10 -> {
                     System.out.println("Saliendo.... :c");
                     System.out.println("Hasta luego :3");
@@ -488,5 +489,29 @@ public class PetCareApp {
         }
         double total = clinica.calcularCobradoVeterinario(veterinario);
         System.out.printf("Total cobrado por %s %s: $%.2f%n", veterinario.getNombre(), veterinario.getApellido(),total);
+    }
+
+    public static void darBajaMascota(Scanner scanner, Clinica clinica) {
+        System.out.println("\n---------- Dar de baja mascota ----------");
+        Mascota mascota = obtenerMascota(scanner, clinica);
+        if (mascota == null) return;
+        System.out.println("\nMascota encontrada:");
+        System.out.println(mascota);
+        System.out.println("¿Confirmar baja?");
+        System.out.println("1. Sí");
+        System.out.println("2. No");
+        int opcion = leerEntero(scanner, "Seleccione una opción: ");
+        if (opcion != 1) {
+            System.out.println("Operación cancelada :3");
+            return;
+        }
+        try {
+            boolean eliminada = clinica.darBajaMascota(
+                mascota.getNombre(), mascota.getDueño()
+            );
+            System.out.println(eliminada ? "¡Mascota dada de baja correctamente! :D" : "No se pudo dar de baja la mascota >:c");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
 }
