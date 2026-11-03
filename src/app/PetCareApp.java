@@ -1,26 +1,11 @@
 package app;
-import java.util.Locale;
-import java.util.Scanner;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.time.format.ResolverStyle;
-import modelo.clinica.Clinica;
-import modelo.clinica.Consulta;
-import modelo.clinica.Cita;
-import modelo.clinica.Consultorio;
-import modelo.clinica.EstadoCita;
-import modelo.mascotas.Mascota;
-import modelo.mascotas.Perro;
-import modelo.mascotas.Gato;
-import modelo.mascotas.EsDomestico;
-import modelo.mascotas.AveExotica;
-import modelo.personas.Dueño;
-import modelo.personas.Veterinario;
-import modelo.servicios.Cirugia;
-import modelo.servicios.Complejidad;
-import modelo.servicios.ConsultaGeneral;
-import modelo.servicios.Vacunacion;
+import java.util.*;
+import java.time.*;
+import java.time.format.*;
+import modelo.clinica.*;
+import modelo.mascotas.*;
+import modelo.personas.*;
+import modelo.servicios.*;
 
 public class PetCareApp {
     public static void main(String[] args) {
@@ -40,6 +25,7 @@ public class PetCareApp {
                 case 2 -> registrarVeterinario(scanner, clinica);
                 case 3 -> agendarCita(scanner, clinica);
                 case 4 -> gestionarCita(scanner, clinica);
+                case 5 -> generarComprobante(scanner, clinica);
                 case 10 -> {
                     System.out.println("Saliendo.... :c");
                     System.out.println("Hasta luego :3");
@@ -291,13 +277,13 @@ public class PetCareApp {
         int id = leerEnteroPositivo(scanner, "ID del dueño: ");
         Dueño dueño = clinica.buscarDueño(id);
         if (dueño == null) {
-            System.out.println("No se encontró al dueño >:c");
+            System.out.println("No se encontró al dueño :c");
             return null;
         }
         String nombre = leerTexto(scanner, "Nombre de la mascota: ");
         Mascota mascota = clinica.buscarMascota(nombre, dueño);
         if (mascota == null) {
-            System.out.println("No se encontró la mascota >:c");
+            System.out.println("No se encontró a la mascota :c");
         }
         return mascota;
     }
@@ -306,7 +292,7 @@ public class PetCareApp {
         int id = leerEnteroPositivo(scanner, "ID del veterinario: ");
         Veterinario veterinario = clinica.buscarVeterinario(id);
         if (veterinario == null) {
-            System.out.println("No se encontró al veterinario >:c");
+            System.out.println("No se encontró al veterinario :c");
         }
         return veterinario;
     }
@@ -315,7 +301,7 @@ public class PetCareApp {
         int numero = leerEnteroPositivo(scanner, "Número de consultorio: ");
         Consultorio consultorio = clinica.buscarConsultorio(numero);
         if (consultorio == null) {
-            System.out.println("No existe ese consultorio >:c");
+            System.out.println("No existe ese consultorio :c");
         }
         return consultorio;
     }
@@ -327,7 +313,7 @@ public class PetCareApp {
             try {
                 return LocalDateTime.parse(texto.toUpperCase(), formato);
             } catch (DateTimeParseException e) {
-                System.out.println("Fecha u hora inválida >:c");
+                System.out.println("Fecha u hora inválida >:P");
             }
         }
     }
@@ -347,11 +333,11 @@ public class PetCareApp {
                 case 3 -> agregarCirugia(scanner, cita);
                 case 4 -> {
                     if (cita.getServicios().isEmpty()) {
-                        System.out.println("Agregue al menos un servicio >:c");
+                        System.out.println("Agregue al menos un servicio >:P");
                         opcion = 0;
                     }
                 }
-                default -> System.out.println("Opción inválida >:c");
+                default -> System.out.println("Opción inválida >:P");
             }
         } while (opcion != 4);
     }
@@ -390,7 +376,7 @@ public class PetCareApp {
             default -> null;
         };
         if (complejidad == null) {
-            System.out.println("Complejidad inválida >:c");
+            System.out.println("Complejidad inválida >:P");
             return;
         }
         double horas = leerDouble(scanner, "Horas de quirófano: ");
@@ -407,7 +393,7 @@ public class PetCareApp {
         int id = leerEnteroPositivo(scanner, "ID de la cita: ");
         Cita cita = clinica.buscarCita(id);
         if (cita == null) {
-            System.out.println("No se encontró la cita >:c");
+            System.out.println("No se encontró la cita :c");
             return;
         }
         System.out.println("1. Atender cita");
@@ -416,13 +402,13 @@ public class PetCareApp {
         switch (opcion) {
             case 1 -> atenderCita(scanner, cita);
             case 2 -> cancelarCita(cita);
-            default -> System.out.println("Opción inválida >:c");
+            default -> System.out.println("Opción inválida >:P");
         }
     }
 
     public static void atenderCita(Scanner scanner, Cita cita) {
         if (cita.getEstado() != EstadoCita.PROGRAMADA) {
-            System.out.println("La cita no está programada >:c");
+            System.out.println("La cita no está programada >:P");
             return;
         }
         String diagnostico = leerTexto(scanner, "Diagnóstico: ");
@@ -441,6 +427,23 @@ public class PetCareApp {
         try {
             cita.cancelarCita();
             System.out.println("¡Cita cancelada correctamente! :D");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    public static void generarComprobante(Scanner scanner, Clinica clinica) {
+        System.out.println("\n---------- Generar comprobante ----------");
+        int id = leerEnteroPositivo(scanner, "ID de la cita: ");
+        Cita cita = clinica.buscarCita(id);
+        if (cita == null) {
+            System.out.println("No se encontró la cita >:P");
+            return;
+        }
+        try {
+            Comprobante comprobante = cita.generarComprobante();
+            System.out.println("¡Comprobante generado correctamente! :D");
+            System.out.println(comprobante);
         } catch (IllegalArgumentException | IllegalStateException e) {
             System.out.println("Error: " + e.getMessage());
         }
