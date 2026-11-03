@@ -3,6 +3,9 @@ import java.util.Scanner;
 import modelo.clinica.Clinica;
 import modelo.mascotas.Mascota;
 import modelo.mascotas.Perro;
+import modelo.mascotas.Gato;
+import modelo.mascotas.EsDomestico;
+import modelo.mascotas.AveExotica;
 import modelo.personas.Dueño;
 
 public class PetCareApp {
@@ -52,17 +55,23 @@ public class PetCareApp {
     }
 
     public static int leerEntero(Scanner scanner, String mensaje) {
-        while (true) {
+    while (true) {
             System.out.print(mensaje);
             try {
-                int numero = Integer.parseInt(scanner.nextLine().strip());
-                if (numero > 0) {
-                    return numero;
-                }
-                System.out.println("Ingrese un múmero mayor a 0 >:P");
+                return Integer.parseInt(scanner.nextLine().strip());
             } catch (NumberFormatException e) {
                 System.out.println("Ingrese un número entero válido >:P");
             }
+        }
+    }
+
+    public static int leerEnteroPositivo(Scanner scanner, String mensaje) {
+        while (true) {
+            int numero = leerEntero(scanner, mensaje);
+            if (numero > 0) {
+                return numero;
+            }
+            System.out.println("Ingrese un número mayor que 0 >:P");
         }
     }
 
@@ -88,7 +97,7 @@ public class PetCareApp {
             System.out.println("Regresando al menú principal...");
             return;
         }
-        Mascota mascota = registrarMascota(scanner, clinica, dueño);
+        registrarMascota(scanner, clinica, dueño);
     }
 
     public static Dueño obtenerDueño(Scanner scanner, Clinica clinica) {
@@ -96,28 +105,24 @@ public class PetCareApp {
         System.out.println("1. Sí");
         System.out.println("2. No");
         int opcion = leerEntero(scanner, "Seleccione una opción: ");
-        switch (opcion) {
-            case 1 -> {
-                System.out.println("-----------------------------------------------");
-                int id = leerEntero(scanner, "ID del dueño: ");
-                if (id <= 0) {
-                    System.out.println("El ID deber ser mayor a 0 >:P");
-                    return null;
-                }
-                Dueño dueño = clinica.buscarDueño(id);
-                if (dueño == null) {
-                    System.out.println("No se encontró al dueño :c");
-                }
-                return dueño;
-            }
-            case 2 -> {
-                return registrarNuevoDueño(scanner, clinica);
-            }
+        return switch (opcion) {
+            case 1 -> buscarDueño(scanner, clinica);
+            case 2 -> registrarNuevoDueño(scanner, clinica);
             default -> {
                 System.out.println("Opción no válida >:P");
-                return null;
+                yield null;
             }
+        };
+    }
+
+    public static Dueño buscarDueño(Scanner scanner, Clinica clinica) {
+        System.out.println("-----------------------------------------------");
+        int id = leerEnteroPositivo(scanner, "ID del dueño: ");
+        Dueño dueño = clinica.buscarDueño(id);
+        if (dueño == null) {
+            System.out.println("No se encontró al dueño :c");
         }
+        return dueño;
     }
 
     public static Dueño registrarNuevoDueño(Scanner scanner, Clinica clinica) {
@@ -144,21 +149,82 @@ public class PetCareApp {
         System.out.println("-------------- Registrar mascota --------------");
         System.out.println("Ingrese los datos básicos de la mascota:");
         String nombre = leerTexto(scanner, "Nombre: ");
-        int edad = leerEntero(scanner, "Edad: ");
+        int edad = leerEnteroPositivo(scanner, "Edad: ");
         double peso = leerDouble(scanner, "Peso (kg): ");
+        Mascota mascota = tipoMascota(scanner, nombre, edad, peso, dueño);
+        if (mascota == null) {
+            System.out.println("No se pudo registrar la mascota :c");
+            return null;
+        }
+        try {
+            clinica.registrarMascota(mascota);
+            System.out.println("¡Mascota registrada correctamente! :D");
+            return mascota;
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+            return null;
+        }
+    }
+    
+    public static Mascota tipoMascota(Scanner scanner, String nombre, int edad, double peso, Dueño dueño) {
         System.out.println("-----------------------------------------------");
         System.out.println("Seleccione el tipo de mascota:");
         System.out.println("1. Perro");
         System.out.println("2. Gato");
         System.out.println("3. Ave");
         int opcion = leerEntero(scanner, "Seleccione una opción: ");
-        Mascota mascota = null;
+        return switch (opcion) {
+            case 1 -> crearPerro(scanner, nombre, edad, peso, dueño);
+            case 2 -> crearGato(scanner, nombre, edad, peso, dueño);
+            case 3 -> crearAve(scanner, nombre, edad, peso,dueño);
+            default -> {
+                System.out.println("Opción no válida >:P");
+                yield null;
+            }
+        };
+    }
+
+    public static Mascota crearPerro(Scanner scanner, String nombre, int edad, double peso, Dueño dueño) {
         System.out.println("-----------------------------------------------");
-        switch (opcion) {
-            case 1 -> {}
-            case 2 -> {}
-            case 3 -> {}
-            default -> {}
+        System.out.println("Indique el resto de datos de la mascota:");
+        String raza = leerTexto(scanner, "Raza: ");
+        int nivelEnergia = leerEnteroPositivo(scanner, "Nivel de energía: ");
+        try {
+            return new Perro(nombre, edad, peso, dueño, raza, nivelEnergia);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static Mascota crearGato(Scanner scanner, String nombre, int edad, double peso, Dueño dueño) {
+        System.out.println("-----------------------------------------------");
+        System.out.println("¿El gato es doméstico?");
+        System.out.println("1. Sí");
+        System.out.println("2. No");
+        int opcion = leerEntero(scanner, "Seleccione una opción: ");
+        EsDomestico esDomestico = switch (opcion) {
+            case 1 -> EsDomestico.SI;
+            case 2 -> EsDomestico.NO;
+            default -> null;
+        };
+        try {
+            return new Gato(nombre, edad, peso, dueño, esDomestico);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public static Mascota crearAve(Scanner scanner, String nombre, int edad, double peso, Dueño dueño) {
+        System.out.println("-----------------------------------------------");
+        System.out.println("Indique el resto de datos de la mascota:");
+        double longitudAlas = leerDouble(scanner, "Longitud de las alas: ");
+        try {
+            return new AveExotica(nombre, edad, peso, dueño, longitudAlas);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+            return null;
         }
     }
 }
