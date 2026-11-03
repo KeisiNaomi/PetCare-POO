@@ -6,8 +6,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import modelo.clinica.Clinica;
+import modelo.clinica.Consulta;
 import modelo.clinica.Cita;
 import modelo.clinica.Consultorio;
+import modelo.clinica.EstadoCita;
 import modelo.mascotas.Mascota;
 import modelo.mascotas.Perro;
 import modelo.mascotas.Gato;
@@ -37,6 +39,7 @@ public class PetCareApp {
                 case 1 -> registrarDueñoYMascota(scanner, clinica);
                 case 2 -> registrarVeterinario(scanner, clinica);
                 case 3 -> agendarCita(scanner, clinica);
+                case 4 -> gestionarCita(scanner, clinica);
                 case 10 -> {
                     System.out.println("Saliendo.... :c");
                     System.out.println("Hasta luego :3");
@@ -394,6 +397,50 @@ public class PetCareApp {
         try {
             cita.agregarServicios(new Cirugia(complejidad, horas));
             System.out.println("¡Cirugía agregada! :D");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    public static void gestionarCita(Scanner scanner, Clinica clinica) {
+        System.out.println("\n---------- Gestionar cita ----------");
+        int id = leerEnteroPositivo(scanner, "ID de la cita: ");
+        Cita cita = clinica.buscarCita(id);
+        if (cita == null) {
+            System.out.println("No se encontró la cita >:c");
+            return;
+        }
+        System.out.println("1. Atender cita");
+        System.out.println("2. Cancelar cita");
+        int opcion = leerEntero(scanner, "Seleccione una opción: ");
+        switch (opcion) {
+            case 1 -> atenderCita(scanner, cita);
+            case 2 -> cancelarCita(cita);
+            default -> System.out.println("Opción inválida >:c");
+        }
+    }
+
+    public static void atenderCita(Scanner scanner, Cita cita) {
+        if (cita.getEstado() != EstadoCita.PROGRAMADA) {
+            System.out.println("La cita no está programada >:c");
+            return;
+        }
+        String diagnostico = leerTexto(scanner, "Diagnóstico: ");
+        String tratamiento = leerTexto(scanner, "Tratamiento: ");
+        try {
+            Consulta consulta = new Consulta(LocalDateTime.now(), diagnostico, tratamiento);
+            cita.atenderCita();
+            cita.getMascota().getHistorialClinico().agregarConsulta(consulta);
+            System.out.println("¡Cita atendida correctamente! :D");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    public static void cancelarCita(Cita cita) {
+        try {
+            cita.cancelarCita();
+            System.out.println("¡Cita cancelada correctamente! :D");
         } catch (IllegalArgumentException | IllegalStateException e) {
             System.out.println("Error: " + e.getMessage());
         }
