@@ -27,6 +27,7 @@ public class PetCareApp {
                 case 4 -> gestionarCita(scanner, clinica);
                 case 5 -> generarComprobante(scanner, clinica);
                 case 6 -> consultarHistorialClinico(scanner, clinica);
+                case 7 -> listarMascotas(clinica);
                 case 10 -> {
                     System.out.println("Saliendo.... :c");
                     System.out.println("Hasta luego :3");
@@ -104,6 +105,7 @@ public class PetCareApp {
             System.out.println("Regresando al menú principal...");
             return;
         }
+        System.out.println("Nombre: " + dueño.getNombre());
         registrarMascota(scanner, clinica, dueño);
     }
 
@@ -460,5 +462,19 @@ public class PetCareApp {
         System.out.println("\nMascota: " + mascota.getNombre());
         System.out.println("---------- Consultas registradas ----------");
         System.out.println(mascota.getHistorialClinico());
+    }
+
+    public static void listarMascotas(Clinica clinica) {
+        System.out.println("\n---------- Mascotas registradas ----------");
+        if (clinica.getMascotas().isEmpty()) {
+            System.out.println("No hay mascotas registradas :c");
+            return;
+        }
+        for (Mascota mascota : clinica.getMascotas()) {
+            System.out.println("----------------------------------");
+            System.out.println(mascota);
+            System.out.print("Sonido: ");
+            mascota.hacerSonido();
+        }
     }
 }
