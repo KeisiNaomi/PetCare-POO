@@ -34,4 +34,16 @@ public class HistorialClinico {
             }
         }
     }
+
+    @Override
+    public String toString() {
+        if (consultas.isEmpty()) {
+            return "Esta mascota todavía no tiene consultas registradas :c";
+        }
+        StringBuilder historial = new StringBuilder();
+        for (Consulta consulta : consultas) {
+            historial.append(consulta).append("\n");
+        }
+        return historial.toString();
+    }
 }
