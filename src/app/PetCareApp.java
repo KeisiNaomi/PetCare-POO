@@ -28,6 +28,7 @@ public class PetCareApp {
                 case 5 -> generarComprobante(scanner, clinica);
                 case 6 -> consultarHistorialClinico(scanner, clinica);
                 case 7 -> listarMascotas(clinica);
+                case 8 -> consultarTotalVeterinario(scanner, clinica);
                 case 10 -> {
                     System.out.println("Saliendo.... :c");
                     System.out.println("Hasta luego :3");
@@ -476,5 +477,16 @@ public class PetCareApp {
             System.out.print("Sonido: ");
             mascota.hacerSonido();
         }
+    }
+
+    public static void consultarTotalVeterinario(Scanner scanner, Clinica clinica) {
+        System.out.println("\n---------- Total por veterinario ----------");
+        Veterinario veterinario = obtenerVeterinario(scanner, clinica);
+        if (veterinario == null) {
+            System.out.println("Regresando al menú principal...");
+            return;
+        }
+        double total = clinica.calcularCobradoVeterinario(veterinario);
+        System.out.printf("Total cobrado por %s %s: $%.2f%n", veterinario.getNombre(), veterinario.getApellido(),total);
     }
 }
