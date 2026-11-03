@@ -1,6 +1,7 @@
 package modelo.clinica;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class Comprobante {
     private static int contadorComprobantes = 0;
@@ -10,12 +11,17 @@ public class Comprobante {
     private Cita cita;
 
     public Comprobante(double costoTotal, Cita cita) {
-        this.folio = ++contadorComprobantes;
+        if (cita == null) {
+            throw new IllegalArgumentException("La cita no puede ser nula >:c");
+        }
+        this.cita = cita;
+        this.costoTotal = costoTotal;
         this.fechaEmision = LocalDateTime.now();
+        this.folio = ++contadorComprobantes;
     }
 
     public String getFechaFormateada() {
-        DateTimeFormatter fechaFormateada = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy, hh:mm a");
+        DateTimeFormatter fechaFormateada = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy, hh:mm a", Locale.forLanguageTag("es-Mx"));
         return fechaEmision.format(fechaFormateada);
     }
 
@@ -27,6 +33,7 @@ public class Comprobante {
     public String toString() {
         return "Folio #" + folio +
             "\nFecha de emisión:\n" + getFechaFormateada() +
+            "\nID Cita:\n" + cita.getIdCita() +
             "\nTotal: " + costoTotal;
     }
 }

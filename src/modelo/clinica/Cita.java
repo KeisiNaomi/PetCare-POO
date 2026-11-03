@@ -123,9 +123,16 @@ public class Cita {
         return total;
     }
 
-    public void generarComprobante() {
+    public Comprobante generarComprobante() {
+        if (estado != EstadoCita.ATENDIDA) {
+            throw new IllegalStateException("Solo se pueden facturar citas atendidas >:c");
+        }
+        if (comprobante != null) {
+            throw new IllegalStateException("Esta cita ya tiene un comprobante >:c");
+        }
         double total = calcularTotal();
         comprobante = new Comprobante(total, this);
+        return comprobante;
     }
 
     @Override

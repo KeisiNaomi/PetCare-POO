@@ -1,12 +1,9 @@
 package modelo.clinica;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ArrayList;
 import java.time.LocalDateTime;
-import java.util.Objects;
-import modelo.personas.Veterinario;
+import java.util.*;
 import modelo.mascotas.Mascota;
 import modelo.personas.Dueño;
+import modelo.personas.Veterinario;
 
 public class Clinica {
     private String nombre;
@@ -38,11 +35,35 @@ public class Clinica {
         consultorios.add(nuevo);
     }
 
-    public void agregarVeterinario(Veterinario veterinario) {
+    public Consultorio buscarConsultorio(int numero) {
+        if (numero <= 0) {
+            throw new IllegalArgumentException("El número de consultorio debe ser mayor que 0 >:c");
+        }
+        for (Consultorio consultorio : consultorios) {
+            if (consultorio.getNumero() == numero) {
+                return consultorio;
+            }
+        }
+        return null;
+    }
+
+    public void registrarVeterinario(Veterinario veterinario) {
         if (veterinario == null) {
             throw new IllegalArgumentException("Asigne un nuevo veterinario >:c");
         }
         veterinarios.add(veterinario);
+    }
+
+    public Veterinario buscarVeterinario(int idVeterinario) {
+        if (idVeterinario <= 0) {
+            throw new IllegalArgumentException("El ID del veterinario debe ser mayor que 0 >:c");
+        }
+        for (Veterinario veterinario : veterinarios) {
+            if (veterinario.getIdVeterinario() == idVeterinario) {
+                return veterinario;
+            }
+        }
+        return null;
     }
 
     public void registrarMascota(Mascota mascota) {
@@ -58,6 +79,18 @@ public class Clinica {
                 cita.cancelarCita();
             }
         }
+    }
+
+    public Mascota buscarMascota(String nombre, Dueño dueño) {
+        if (nombre == null || nombre.isBlank() || dueño == null) {
+            throw new IllegalArgumentException("Indique un nombre y un dueño válidos >:c");
+        }
+        for (Mascota mascota : mascotas) {
+            if (mascota.getNombre().equalsIgnoreCase(nombre.strip()) && mascota.getDueño() == dueño) {
+                return mascota;
+            }
+        }
+        return null;
     }
 
     public boolean darBajaMascota(String nombre, Dueño dueño) {
@@ -161,7 +194,7 @@ public class Clinica {
         return calculartotalCobrado(null, veterinario);
     }
 
-    public List<Mascota> getMascotas() {
+    public ArrayList<Mascota> getMascotas() {
         return new ArrayList<>(mascotas);
     }
 }

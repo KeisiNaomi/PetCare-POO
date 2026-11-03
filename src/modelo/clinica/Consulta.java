@@ -43,6 +43,8 @@ public class Consulta {
     public String toString() {
         return "Fecha:" + getFechaFormateada() +
             "\nDiagnostico: " + diagnostico +
-            "\nTratamiento: " + tratamiento;
+            "\nTratamiento: " + tratamiento +
+            "--------------------------------";
+
     }
 }
