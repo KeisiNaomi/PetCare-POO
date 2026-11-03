@@ -1,4 +1,5 @@
 package app;
+import java.util.Locale;
 import java.util.Scanner;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,6 +15,10 @@ import modelo.mascotas.EsDomestico;
 import modelo.mascotas.AveExotica;
 import modelo.personas.Dueño;
 import modelo.personas.Veterinario;
+import modelo.servicios.Cirugia;
+import modelo.servicios.Complejidad;
+import modelo.servicios.ConsultaGeneral;
+import modelo.servicios.Vacunacion;
 
 public class PetCareApp {
     public static void main(String[] args) {
@@ -31,6 +36,7 @@ public class PetCareApp {
             switch (opcion) {
                 case 1 -> registrarDueñoYMascota(scanner, clinica);
                 case 2 -> registrarVeterinario(scanner, clinica);
+                case 3 -> agendarCita(scanner, clinica);
                 case 10 -> {
                     System.out.println("Saliendo.... :c");
                     System.out.println("Hasta luego :3");
@@ -253,6 +259,142 @@ public class PetCareApp {
             System.out.println("¡Veterinario registrado correctamente! :D");
             System.out.println("ID asignado: " + veterinario.getIdVeterinario());
         } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    
+    public static void agendarCita(Scanner scanner, Clinica clinica) {
+        System.out.println("\n---------- Agendar cita ----------");
+        Mascota mascota = obtenerMascota(scanner, clinica);
+        if (mascota == null) return;
+        Veterinario veterinario = obtenerVeterinario(scanner, clinica);
+        if (veterinario == null) return;
+        Consultorio consultorio = obtenerConsultorio(scanner, clinica);
+        if (consultorio == null) return;
+        LocalDateTime fechaHora = leerFechaHora(scanner);
+        try {
+            Cita cita = clinica.registrarCita(fechaHora, mascota, veterinario, consultorio);
+            seleccionarServicios(scanner, cita);
+            System.out.println("¡Cita agendada correctamente! :D");
+            System.out.println("ID asignado: " + cita.getIdCita());
+            System.out.println("Total estimado: $" + cita.calcularTotal());
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private static Mascota obtenerMascota(Scanner scanner, Clinica clinica) {
+        int id = leerEnteroPositivo(scanner, "ID del dueño: ");
+        Dueño dueño = clinica.buscarDueño(id);
+        if (dueño == null) {
+            System.out.println("No se encontró al dueño >:c");
+            return null;
+        }
+        String nombre = leerTexto(scanner, "Nombre de la mascota: ");
+        Mascota mascota = clinica.buscarMascota(nombre, dueño);
+        if (mascota == null) {
+            System.out.println("No se encontró la mascota >:c");
+        }
+        return mascota;
+    }
+
+    private static Veterinario obtenerVeterinario(Scanner scanner, Clinica clinica) {
+        int id = leerEnteroPositivo(scanner, "ID del veterinario: ");
+        Veterinario veterinario = clinica.buscarVeterinario(id);
+        if (veterinario == null) {
+            System.out.println("No se encontró al veterinario >:c");
+        }
+        return veterinario;
+    }
+
+    private static Consultorio obtenerConsultorio(Scanner scanner, Clinica clinica) {
+        int numero = leerEnteroPositivo(scanner, "Número de consultorio: ");
+        Consultorio consultorio = clinica.buscarConsultorio(numero);
+        if (consultorio == null) {
+            System.out.println("No existe ese consultorio >:c");
+        }
+        return consultorio;
+    }
+
+    private static LocalDateTime leerFechaHora(Scanner scanner) {
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/uuuu hh:mm a", Locale.US).withResolverStyle(ResolverStyle.STRICT);
+        while (true) {
+            String texto = leerTexto(scanner, "Fecha y hora (dd/MM/yyyy hh:mm AM/PM): ");
+            try {
+                return LocalDateTime.parse(texto.toUpperCase(), formato);
+            } catch (DateTimeParseException e) {
+                System.out.println("Fecha u hora inválida >:c");
+            }
+        }
+    }
+
+    private static void seleccionarServicios(Scanner scanner, Cita cita) {
+        int opcion;
+        do {
+            System.out.println("\n---------- Servicios ----------");
+            System.out.println("1. Consulta general");
+            System.out.println("2. Vacunación");
+            System.out.println("3. Cirugía");
+            System.out.println("4. Terminar");
+            opcion = leerEntero(scanner, "Seleccione una opción: ");
+            switch (opcion) {
+                case 1 -> agregarConsultaGeneral(scanner, cita);
+                case 2 -> agregarVacunacion(scanner, cita);
+                case 3 -> agregarCirugia(scanner, cita);
+                case 4 -> {
+                    if (cita.getServicios().isEmpty()) {
+                        System.out.println("Agregue al menos un servicio >:c");
+                        opcion = 0;
+                    }
+                }
+                default -> System.out.println("Opción inválida >:c");
+            }
+        } while (opcion != 4);
+    }
+
+    private static void agregarConsultaGeneral(Scanner scanner, Cita cita) {
+        double tarifa = leerDouble(scanner, "Tarifa de consulta: $");
+        try {
+            cita.agregarServicios(new ConsultaGeneral(tarifa));
+            System.out.println("¡Consulta general agregada! :D");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private static void agregarVacunacion(Scanner scanner, Cita cita) {
+        double tarifa = leerDouble(scanner, "Tarifa de vacunación: $");
+        double costo = leerDouble(scanner, "Costo de la vacuna: $");
+        try {
+            cita.agregarServicios(new Vacunacion(tarifa, costo));
+            System.out.println("¡Vacunación agregada! :D");
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private static void agregarCirugia(Scanner scanner, Cita cita) {
+        System.out.println("Seleccione la complejidad:");
+        System.out.println("1. Baja");
+        System.out.println("2. Media");
+        System.out.println("3. Alta");
+        int opcion = leerEntero(scanner, "Opción: ");
+        Complejidad complejidad = switch (opcion) {
+            case 1 -> Complejidad.BAJA;
+            case 2 -> Complejidad.MEDIA;
+            case 3 -> Complejidad.ALTA;
+            default -> null;
+        };
+        if (complejidad == null) {
+            System.out.println("Complejidad inválida >:c");
+            return;
+        }
+        double horas = leerDouble(scanner, "Horas de quirófano: ");
+        try {
+            cita.agregarServicios(new Cirugia(complejidad, horas));
+            System.out.println("¡Cirugía agregada! :D");
+        } catch (IllegalArgumentException | IllegalStateException e) {
             System.out.println("Error: " + e.getMessage());
         }
     }
